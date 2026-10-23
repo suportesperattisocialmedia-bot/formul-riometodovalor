@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body style="margin:0">
+<title>Questionário de Entrada VALOR</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: uma coluna estreita de leitura, um bloco por vez, como uma ficha de diagnóstico */
+:root{
+  --bg:#F3F2EE; --surface:#FCFBF8; --ink:#16181D; --muted:#5A5F68; --line:#DCD7CD;
+  --accent:#8C6420; --accent-strong:#B8862F; --accent-soft:#EFE5D2; --on-accent:#16181D;
+  --ok:#2F6B4F; --danger:#9B2C2C;
+  --display:'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --body:'DM Sans', 'Segoe UI', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121418; --surface:#1B1E24; --ink:#ECE8E0; --muted:#A9A498; --line:#30343C;
+  --accent:#D9AE5F; --accent-strong:#D9AE5F; --accent-soft:#2A251B; --on-accent:#16181D;
+  --ok:#7CC4A0; --danger:#F08A8A; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#121418; --surface:#1B1E24; --ink:#ECE8E0; --muted:#A9A498; --line:#30343C;
+  --accent:#D9AE5F; --accent-strong:#D9AE5F; --accent-soft:#2A251B; --on-accent:#16181D;
+  --ok:#7CC4A0; --danger:#F08A8A; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:32px 72px;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,7vw,52px);line-height:1.05;margin:0;text-wrap:balance}
+.lead{color:var(--muted);margin:0;max-width:60ch}
+.progress{display:flex;flex-direction:column;gap:10px}
+.progress-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.progress-top b{color:var(--ink);font-weight:600}
+.bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--accent-strong);width:0;transition:width .3s ease}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.steps button{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:99px;padding:4px 10px;cursor:pointer}
+.steps button[aria-current="step"]{border-color:var(--accent-strong);color:var(--ink);background:var(--accent-soft)}
+.steps button.done{color:var(--ink)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(20px,4vw,32px);display:flex;flex-direction:column;gap:24px}
+.card h2{font-family:var(--display);font-weight:400;font-size:clamp(28px,5vw,36px);line-height:1.1;margin:0;text-wrap:balance}
+.card .why{margin:-12px 0 0;color:var(--muted);font-size:15px}
+.field{display:flex;flex-direction:column;gap:8px;min-width:0}
+.field > label, .field > .label{font-weight:600;font-size:16px}
+.req{color:var(--accent);font-weight:600}
+.help{font-size:14px;color:var(--muted);margin:-4px 0 0}
+input[type=text],input[type=tel],input[type=number],textarea,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;width:100%}
+textarea{min-height:104px;resize:vertical}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible,.chip input:focus-visible + span{outline:2px solid var(--accent-strong);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.chip span{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-size:15px;background:var(--bg)}
+.chip input:checked + span{background:var(--accent-soft);border-color:var(--accent-strong);font-weight:600}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.scale .chip span{display:block;text-align:center;padding:10px 0}
+.scale-legend{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:560px){.row{grid-template-columns:1fr}}
+.nav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:600;border-radius:10px;padding:12px 20px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.primary{background:var(--accent-strong);border-color:var(--accent-strong);color:var(--on-accent)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.error{color:var(--danger);font-size:14px;margin:0}
+.saved{font-size:13px;color:var(--muted)}
+.review{display:flex;flex-direction:column;gap:20px}
+.review section{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:16px}
+.review h3{margin:0;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.review dl{margin:0;display:flex;flex-direction:column;gap:10px}
+.review dt{font-size:14px;color:var(--muted)}
+.review dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.review dd.empty{color:var(--muted);font-style:italic}
+.send{display:flex;flex-direction:column;gap:12px;background:var(--accent-soft);border:1px solid var(--accent-strong);border-radius:12px;padding:20px}
+.send p{margin:0}
+.send .actions{display:flex;gap:10px;flex-wrap:wrap}
+.status{font-size:14px;color:var(--ok);margin:0;min-height:1.4em}
+footer{font-size:13px;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion: reduce){.bar span{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Mentoria Método VALOR · Antes do encontro 1</p>
+    <h1>Questionário de entrada</h1>
+    <p class="lead">Suas respostas viram o diagnóstico do seu negócio pelos cinco pilares. Responda com sinceridade e sem pressa: leva uns 25 minutos. Não existe resposta errada, só resposta vaga.</p>
+  </header>
+
+  <div class="progress" aria-live="polite">
+    <div class="progress-top"><span id="stepLabel"><b>Bloco 1 de 8</b></span><span id="savedNote" class="saved">Rascunho salvo neste aparelho</span></div>
+    <div class="bar"><span id="barFill"></span></div>
+    <nav class="steps" id="steps" aria-label="Blocos do questionário"></nav>
+  </div>
+
+  <form id="form" class="card" novalidate autocomplete="on"></form>
+
+  <footer>Gabriel Speratti · Speratti Assessoria</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  // Número do WhatsApp do mentor (DDI + DDD + número, só dígitos). Vazio: o mentorado escolhe o contato.
+  var MENTOR_WHATSAPP = "";
+  var STORE_KEY = "valor-questionario-v1";
+
+  var SECTIONS = [
+    { id:"voce", title:"Você", why:"Para o mentor conhecer quem está do outro lado e o momento que você vive.", fields:[
+      {id:"nome", label:"Nome completo", type:"text", required:true, autocomplete:"name"},
+      {id:"whatsapp", label:"WhatsApp com DDD", type:"tel", required:true, autocomplete:"tel", placeholder:"(11) 99999-9999"},
+      {id:"cidade", label:"Cidade e estado", type:"text", half:true, autocomplete:"address-level2"},
+      {id:"profissao", label:"Profissão ou especialidade", type:"text", half:true},
+      {id:"tempo", label:"Há quanto tempo você atua nisso?", type:"radio", options:["Menos de 1 ano","1 a 3 anos","3 a 7 anos","Mais de 7 anos"]},
+      {id:"momento", label:"Qual frase descreve melhor o seu momento?", type:"radio", options:["Estou começando","Estou em transição de carreira","Já atendo, mas quero vender mais","Tenho um negócio estável e quero escalar"]},
+      {id:"formacao", label:"Formações e certificações que mais pesam no seu trabalho", type:"textarea", help:"Liste as principais. Elas entram na sua Matriz de Provas."}
+    ]},
+    { id:"negocio", title:"Seu negócio hoje", why:"O ponto de partida da Escada de Oferta e do painel de números.", fields:[
+      {id:"oferta", label:"O que você vende hoje e por quanto?", type:"textarea", help:"Um item por linha. Exemplo: sessão individual R$ 250, pacote de 4 sessões R$ 900."},
+      {id:"formato", label:"Como você vende na maior parte do tempo?", type:"radio", options:["Atendimento avulso (hora ou sessão)","Pacote fechado","Programa com começo, meio e fim","Recorrência mensal","Produto digital","Outro"]},
+      {id:"faturamento", label:"Faturamento médio por mês nos últimos 3 meses", type:"radio", options:["Até R$ 3 mil","R$ 3 a 8 mil","R$ 8 a 15 mil","R$ 15 a 30 mil","Acima de R$ 30 mil","Prefiro falar no encontro"]},
+      {id:"clientesMes", label:"Quantos clientes você atende por mês?", type:"text", half:true},
+      {id:"ticket", label:"Quanto um cliente paga, em média?", type:"text", half:true, placeholder:"R$"},
+      {id:"origem", label:"De onde vêm os seus clientes hoje?", type:"checkbox", help:"Marque todas que se aplicam.", options:["Indicação","Instagram orgânico","Tráfego pago","Google","WhatsApp e lista própria","Parcerias","Prospecção ativa","Eventos e palestras","Convênio ou plataforma"]},
+      {id:"melhorProduto", label:"Qual oferta você mais gostaria de vender, se pudesse escolher?", type:"textarea"}
+    ]},
+    { id:"cliente", title:"Seu cliente ideal", why:"Posicionamento começa por quem, antes do quê. Este é o bloco mais importante.", fields:[
+      {id:"faltaNome", label:"Pense no cliente que mais sentiria a sua falta se você parasse de atender. Quem é ele?", type:"textarea", help:"Use um nome real (pode ser só o primeiro). Conte idade, momento de vida e por que ele é tão especial para você."},
+      {id:"problema", label:"Qual problema você resolve, em uma frase?", type:"textarea"},
+      {id:"tentou", label:"O que esse cliente já tinha tentado antes de chegar até você?", type:"textarea"},
+      {id:"palavras", label:"Quais palavras ou frases os clientes usam para descrever a dor deles?", type:"textarea", help:"Copie do jeito que eles falam no WhatsApp ou na primeira conversa, sem traduzir para o seu vocabulário técnico."},
+      {id:"porque", label:"Por que te escolhem e não outro profissional?", type:"textarea"},
+      {id:"naoQuer", label:"Que tipo de cliente você não quer mais atender?", type:"textarea"}
+    ]},
+    { id:"redes", title:"Redes e presença digital", why:"Para o Raio-X do perfil e para saber quais ativos já são seus.", fields:[
+      {id:"instagram", label:"Seu @ no Instagram", type:"text", half:true, placeholder:"@"},
+      {id:"seguidores", label:"Quantos seguidores tem hoje?", type:"text", half:true},
+      {id:"outrasRedes", label:"Outras redes que você usa, com o @ ou link", type:"textarea", help:"TikTok, YouTube, LinkedIn, Facebook, podcast, blog."},
+      {id:"frequencia", label:"Com que frequência você publica hoje?", type:"radio", options:["Quase nunca","1 vez por semana","2 a 3 vezes por semana","Todo dia","Só stories"]},
+      {id:"formatos", label:"Formatos que você mais usa", type:"checkbox", options:["Reels","Carrossel","Foto","Stories","Lives","Vídeo longo","Texto"]},
+      {id:"melhorPost", label:"Qual publicação sua trouxe mais resultado (seguidores, mensagens ou vendas)? Cole o link ou descreva.", type:"textarea"},
+      {id:"rosto", label:"Como você se sente aparecendo em vídeo?", type:"radio", options:["Tranquilo, já faço","Faço, mas com desconforto","Evito sempre que posso","Não apareço de jeito nenhum"]},
+      {id:"site", label:"Você tem site ou domínio próprio?", type:"radio", options:["Sim, com domínio próprio","Tenho página de link (Linktree e parecidos)","Não tenho"]},
+      {id:"linkBio", label:"Para onde o link da sua bio leva hoje?", type:"text"},
+      {id:"lista", label:"Você tem lista própria de contatos (WhatsApp, e-mail)? Quantos, mais ou menos?", type:"text"},
+      {id:"trafego", label:"Investe em tráfego pago? Quanto por mês?", type:"text", placeholder:"Ex.: não invisto / R$ 500 por mês"}
+    ]},
+    { id:"numeros", title:"Seus números (marco zero)", why:"É a foto de hoje. Daqui a 12 semanas a gente compara com ela. Se não souber, coloque sua melhor estimativa e marque com um ~.", fields:[
+      {id:"n_seg", label:"Seguidores novos nos últimos 7 dias", type:"text", half:true, help:"Instagram: Painel profissional, Insights."},
+      {id:"n_visitas", label:"Visitas ao perfil nos últimos 7 dias", type:"text", half:true},
+      {id:"n_posts", label:"Publicações no último mês (feed e Reels)", type:"text", half:true},
+      {id:"n_conversas", label:"Conversas novas por semana (direct e WhatsApp)", type:"text", half:true},
+      {id:"n_vendas", label:"Vendas fechadas no último mês", type:"text", half:true},
+      {id:"n_fat", label:"Faturamento do último mês", type:"text", half:true, placeholder:"R$"}
+    ]},
+    { id:"objetivos", title:"Objetivos", why:"Para montar a meta de 12 meses a partir da vida que você quer, e não ao contrário.", fields:[
+      {id:"vidaBoa", label:"O que é uma vida boa para você, daqui a 12 meses?", type:"textarea", help:"Rotina, tempo com a família, lugar, o que você não quer mais fazer."},
+      {id:"precisa", label:"Quanto você precisa faturar por mês para viver essa vida?", type:"text", half:true, placeholder:"R$"},
+      {id:"meta12", label:"Qual é a sua meta de faturamento mensal em 12 meses?", type:"text", half:true, placeholder:"R$"},
+      {id:"valeuPena", label:"O que precisa acontecer nestes 3 meses para você dizer que a mentoria valeu muito a pena?", type:"textarea"},
+      {id:"lancamento", label:"Você tem lançamento, evento ou data importante nos próximos 45 dias?", type:"radio", options:["Não","Sim"]},
+      {id:"lancamentoQual", label:"Se sim, qual e quando?", type:"text"}
+    ]},
+    { id:"obstaculos", title:"Obstáculos e crenças", why:"O que trava a venda quase nunca é técnica. Aqui a gente encontra o que segura você.", fields:[
+      {id:"obstaculo", label:"Qual é o maior obstáculo do seu negócio hoje?", type:"textarea"},
+      {id:"tentouNaoDeu", label:"O que você já tentou para crescer e não funcionou?", type:"textarea"},
+      {id:"c_cobrar", label:"“Tenho vergonha de cobrar o que o meu trabalho vale.”", type:"scale"},
+      {id:"c_vender", label:"“Vender parece pouco ético na minha área.”", type:"scale"},
+      {id:"c_expor", label:"“Tenho medo do que vão pensar quando eu aparecer mais.”", type:"scale"},
+      {id:"c_constancia", label:"“Já comecei a postar com frequência e parei no meio.”", type:"scale"},
+      {id:"c_clareza", label:"“Consigo explicar em uma frase o que faço e para quem.”", type:"scale"},
+      {id:"frase", label:"Uma frase sobre dinheiro ou venda que você costuma repetir (ou que ouviu muito em casa)", type:"textarea"}
+    ]},
+    { id:"rotina", title:"Rotina e combinado", why:"Para as tarefas caberem na sua semana real.", fields:[
+      {id:"horas", label:"Quantas horas por semana você consegue dedicar ao negócio, fora os atendimentos?", type:"radio", options:["Menos de 2 horas","2 a 4 horas","4 a 8 horas","Mais de 8 horas"]},
+      {id:"diaGravar", label:"Qual o melhor dia e horário para gravar conteúdo?", type:"text"},
+      {id:"ajuda", label:"Quem te ajuda hoje?", type:"checkbox", options:["Ninguém, faço tudo sozinho","Secretária ou atendente","Social media ou agência","Designer ou editor","Sócio","Família"]},
+      {id:"cobranca", label:"Como você prefere ser cobrado quando não fizer uma tarefa?", type:"radio", options:["Direto ao ponto","Com leveza, mas sem deixar passar","Me pergunte o que aconteceu primeiro"]},
+      {id:"combinado", label:"O nosso combinado", type:"checkbox", help:"Marque os três para começar.", options:["Vou reservar horário fixo na agenda para as tarefas","Vou sentar na cadeira de aluno, mesmo sendo especialista","Vou testar o combinado por uma semana antes de mudar o caminho"]},
+      {id:"recado", label:"Algo mais que o mentor precisa saber antes do primeiro encontro?", type:"textarea"}
+    ]}
+  ];
+  var TOTAL = SECTIONS.length;
+  var SCALE_LEGEND = ["Discordo totalmente","Concordo totalmente"];
+
+  var data = {}; var step = 0;
+  try { var raw = localStorage.getItem(STORE_KEY); if (raw) { var parsed = JSON.parse(raw); data = parsed.data || {}; step = Math.min(parsed.step || 0, TOTAL); } } catch(e) {}
+
+  var form = document.getElementById("form");
+  var stepsNav = document.getElementById("steps");
+  var stepLabel = document.getElementById("stepLabel");
+  var barFill = document.getElementById("barFill");
+  var savedNote = document.getElementById("savedNote");
+
+  function persist(){
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({data:data, step:step})); savedNote.textContent = "Rascunho salvo neste aparelho"; }
+    catch(e){ savedNote.textContent = "Não foi possível salvar o rascunho neste navegador"; }
+  }
+  function el(tag, attrs, text){ var n=document.createElement(tag); if(attrs){ for(var k in attrs){ if(k==="class") n.className=attrs[k]; else n.setAttribute(k, attrs[k]); } } if(text!=null) n.textContent=text; return n; }
+  function valueOf(f){ var v=data[f.id]; if(f.type==="checkbox") return Array.isArray(v)?v:[]; return v==null?"":v; }
+
+  function renderSteps(){
+    stepsNav.innerHTML="";
+    SECTIONS.forEach(function(s,i){
+      var b=el("button",{type:"button"}, (i+1)+". "+s.title);
+      if(i===step) b.setAttribute("aria-current","step");
+      if(sectionFilled(s)) b.classList.add("done");
+      b.addEventListener("click", function(){ if(i===step) return; if(i>step && !validate(true)) return; step=i; persist(); render(); });
+      stepsNav.appendChild(b);
+    });
+    var rv=el("button",{type:"button"}, "Revisar e enviar");
+    if(step===TOTAL) rv.setAttribute("aria-current","step");
+    rv.addEventListener("click", function(){ if(!validateAll()) return; step=TOTAL; persist(); render(); });
+    stepsNav.appendChild(rv);
+  }
+  function sectionFilled(s){ return s.fields.some(function(f){ var v=valueOf(f); return Array.isArray(v)? v.length>0 : String(v).trim()!==""; }); }
+
+  function fieldNode(f){
+    var wrap=el("div",{class:"field"});
+    var lid="f_"+f.id;
+    var group = (f.type==="radio"||f.type==="checkbox"||f.type==="scale");
+    var lab = group ? el("p",{class:"label", id:lid+"_l"}) : el("label",{for:lid});
+    lab.appendChild(document.createTextNode(f.label));
+    if(f.required){ lab.appendChild(document.createTextNode(" ")); lab.appendChild(el("span",{class:"req","aria-hidden":"true"},"*")); }
+    wrap.appendChild(lab);
+    if(f.help) wrap.appendChild(el("p",{class:"help"}, f.help));
+    var v=valueOf(f);
+    if(f.type==="textarea"){
+      var t=el("textarea",{id:lid,name:f.id}); t.value=v; if(f.placeholder) t.placeholder=f.placeholder;
+      t.addEventListener("input", function(){ data[f.id]=t.value; persist(); }); wrap.appendChild(t);
+    } else if(f.type==="text"||f.type==="tel"){
+      var i=el("input",{id:lid,name:f.id,type:f.type}); i.value=v; if(f.placeholder) i.placeholder=f.placeholder; if(f.autocomplete) i.setAttribute("autocomplete", f.autocomplete); if(f.required) i.required=true;
+      i.addEventListener("input", function(){ data[f.id]=i.value; persist(); }); wrap.appendChild(i);
+    } else if(f.type==="radio"||f.type==="checkbox"){
+      var box=el("div",{class:"chips",role:f.type==="radio"?"radiogroup":"group","aria-labelledby":lid+"_l"});
+      f.options.forEach(function(opt,idx){
+        var c=el("label",{class:"chip"}); var inp=el("input",{type:f.type,name:f.id,id:lid+"_"+idx}); inp.value=opt;
+        inp.checked = f.type==="radio" ? v===opt : v.indexOf(opt)>-1;
+        inp.addEventListener("change", function(){
+          if(f.type==="radio"){ data[f.id]=opt; }
+          else { var arr=valueOf(f).slice(); var at=arr.indexOf(opt); if(inp.checked && at<0) arr.push(opt); if(!inp.checked && at>-1) arr.splice(at,1); data[f.id]=arr; }
+          persist();
+        });
+        c.appendChild(inp); c.appendChild(el("span",null,opt)); box.appendChild(c);
+      });
+      wrap.appendChild(box);
+    } else if(f.type==="scale"){
+      var sc=el("div",{class:"chips scale",role:"radiogroup","aria-labelledby":lid+"_l"});
+      for(var n=1;n<=5;n++){ (function(n){
+        var c=el("label",{class:"chip"}); var inp=el("input",{type:"radio",name:f.id,id:lid+"_"+n,"aria-label":n+" de 5"}); inp.value=String(n); inp.checked = String(v)===String(n);
+        inp.addEventListener("change", function(){ data[f.id]=String(n); persist(); });
+        c.appendChild(inp); c.appendChild(el("span",null,String(n))); sc.appendChild(c);
+      })(n); }
+      wrap.appendChild(sc);
+      var lg=el("div",{class:"scale-legend"}); lg.appendChild(el("span",null,"1 · "+SCALE_LEGEND[0])); lg.appendChild(el("span",null,"5 · "+SCALE_LEGEND[1])); wrap.appendChild(lg);
+    }
+    var err=el("p",{class:"error",id:lid+"_err"}); err.hidden=true; wrap.appendChild(err);
+    return wrap;
+  }
+
+  function validate(showErrors){
+    if(step>=TOTAL) return true;
+    var ok=true, first=null;
+    SECTIONS[step].fields.forEach(function(f){
+      if(!f.required) return;
+      var v=String(valueOf(f)).trim(); var errEl=document.getElementById("f_"+f.id+"_err");
+      var bad = v===""; var msg="Preencha este campo para continuar.";
+      if(!bad && f.type==="tel" && v.replace(/\D/g,"").length<10){ bad=true; msg="Coloque o número com DDD, por exemplo (11) 99999-9999."; }
+      if(errEl && showErrors){ errEl.hidden=!bad; errEl.textContent=bad?msg:""; }
+      if(bad){ ok=false; if(!first) first=document.getElementById("f_"+f.id); }
+    });
+    if(!ok && first && showErrors) first.focus();
+    return ok;
+  }
+  function validateAll(){
+    for(var s=0;s<TOTAL;s++){ var miss=SECTIONS[s].fields.some(function(f){ return f.required && String(valueOf(f)).trim()===""; }); if(miss){ step=s; persist(); render(); validate(true); return false; } }
+    return true;
+  }
+
+  function buildText(){
+    var lines=["QUESTIONÁRIO DE ENTRADA · MÉTODO VALOR", ""];
+    SECTIONS.forEach(function(s,i){
+      lines.push("== "+(i+1)+". "+s.title.toUpperCase()+" ==");
+      s.fields.forEach(function(f){
+        var v=valueOf(f); var out = Array.isArray(v) ? v.join("; ") : String(v).trim();
+        if(f.type==="scale" && out) out = out+" de 5";
+        lines.push(f.label.replace(/[“”]/g,'"')); lines.push("> "+(out||"(sem resposta)"));
+      });
+      lines.push("");
+    });
+    return lines.join("\n");
+  }
+
+  function renderReview(){
+    form.appendChild(el("h2",null,"Revise antes de enviar"));
+    form.appendChild(el("p",{class:"why"},"Confira as respostas. Para corrigir algo, toque no bloco lá em cima."));
+    var rv=el("div",{class:"review"});
+    SECTIONS.forEach(function(s,i){
+      var sec=el("section"); sec.appendChild(el("h3",null,(i+1)+". "+s.title)); var dl=el("dl");
+      s.fields.forEach(function(f){ var v=valueOf(f); var out=Array.isArray(v)?v.join(", "):String(v).trim(); if(f.type==="scale"&&out) out=out+" de 5";
+        dl.appendChild(el("dt",null,f.label)); var dd=el("dd",out?null:{class:"empty"}, out||"Sem resposta"); dl.appendChild(dd); });
+      sec.appendChild(dl); rv.appendChild(sec);
+    });
+    form.appendChild(rv);
+
+    var text=buildText();
+    var send=el("div",{class:"send"});
+    send.appendChild(el("p",null,"Último passo: copie as respostas e envie para o Gabriel no WhatsApp. Ele lê tudo e chega no encontro 1 com o seu diagnóstico pronto."));
+    var actions=el("div",{class:"actions"});
+    var copyBtn=el("button",{type:"button",class:"btn primary",id:"copyBtn"},"Copiar respostas");
+    var base = MENTOR_WHATSAPP ? "https://wa.me/"+MENTOR_WHATSAPP : "https://wa.me/";
+    var href = text.length < 6000 ? base+"?text="+encodeURIComponent(text) : base;
+    var wa=el("a",{class:"btn",href:href,target:"_blank",rel:"noopener",id:"waLink"},"Abrir o WhatsApp");
+    actions.appendChild(copyBtn); actions.appendChild(wa); send.appendChild(actions);
+    var status=el("p",{class:"status",role:"status"}); send.appendChild(status);
+    var fallback=el("textarea",{id:"fallbackText","aria-label":"Respostas em texto para copiar"}); fallback.value=text; fallback.readOnly=true; fallback.hidden=true; fallback.style.minHeight="220px"; send.appendChild(fallback);
+    copyBtn.addEventListener("click", function(){
+      function manual(){ fallback.hidden=false; fallback.focus(); fallback.select(); status.textContent="Selecionamos o texto abaixo. Use copiar do seu aparelho e cole no WhatsApp."; }
+      try { navigator.clipboard.writeText(text).then(function(){ status.textContent="Respostas copiadas. Agora é só colar na conversa com o Gabriel."; }, manual); }
+      catch(e){ manual(); }
+    });
+    if(text.length>=6000) send.appendChild(el("p",{class:"help"},"Suas respostas são longas: copie primeiro e depois cole na conversa."));
+    form.appendChild(send);
+
+    var nav=el("div",{class:"nav"});
+    var back=el("button",{type:"button",class:"btn"},"Voltar");
+    back.addEventListener("click", function(){ step=TOTAL-1; persist(); render(); });
+    nav.appendChild(back); form.appendChild(nav);
+  }
+
+  function render(){
+    form.innerHTML="";
+    var pct = Math.round((Math.min(step,TOTAL)/TOTAL)*100);
+    barFill.style.width = pct+"%";
+    stepLabel.innerHTML = "";
+    var b=document.createElement("b"); b.textContent = step<TOTAL ? "Bloco "+(step+1)+" de "+TOTAL : "Revisão final"; stepLabel.appendChild(b);
+    renderSteps();
+    if(step>=TOTAL){ renderReview(); return; }
+    var s=SECTIONS[step];
+    form.appendChild(el("h2",null,s.title));
+    form.appendChild(el("p",{class:"why"},s.why));
+    var pending=null;
+    s.fields.forEach(function(f){
+      var node=fieldNode(f);
+      if(f.half){ if(pending){ pending.appendChild(node); form.appendChild(pending); pending=null; } else { pending=el("div",{class:"row"}); pending.appendChild(node); } }
+      else { if(pending){ form.appendChild(pending); pending=null; } form.appendChild(node); }
+    });
+    if(pending) form.appendChild(pending);
+    var nav=el("div",{class:"nav"});
+    var back=el("button",{type:"button",class:"btn"},"Voltar"); back.disabled = step===0;
+    back.addEventListener("click", function(){ if(step>0){ step--; persist(); render(); window.scrollTo(0,0); } });
+    var next=el("button",{type:"submit",class:"btn primary"}, step===TOTAL-1 ? "Revisar respostas" : "Avançar");
+    nav.appendChild(back); nav.appendChild(next); form.appendChild(nav);
+  }
+
+  form.addEventListener("submit", function(e){ e.preventDefault(); if(step>=TOTAL) return; if(!validate(true)) return; step++; if(step===TOTAL && !validateAll()) return; persist(); render(); window.scrollTo(0,0); });
+
+  render();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gerador de Bio VALOR</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F3F2EE; --surface:#FCFBF8; --ink:#16181D; --muted:#5A5F68; --line:#DCD7CD;
+  --accent:#8C6420; --accent-strong:#B8862F; --accent-soft:#EFE5D2; --on-accent:#16181D;
+  --good:#2F6B4F; --bad:#9B2C2C;
+  --display:'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --body:'DM Sans', 'Segoe UI', Arial, sans-serif;
+  --phone:#0C0D10; --phone-ink:#F2F2F2; --phone-muted:#9A9AA0; --phone-btn:#26272C;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121418; --surface:#1B1E24; --ink:#ECE8E0; --muted:#A9A498; --line:#30343C;
+  --accent:#D9AE5F; --accent-strong:#D9AE5F; --accent-soft:#2A251B;
+  --good:#7CC4A0; --bad:#F08A8A; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#121418; --surface:#1B1E24; --ink:#ECE8E0; --muted:#A9A498; --line:#30343C;
+  --accent:#D9AE5F; --accent-strong:#D9AE5F; --accent-soft:#2A251B;
+  --good:#7CC4A0; --bad:#F08A8A; color-scheme:dark }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:28px max(16px, env(safe-area-inset-right, 0px)) 64px max(16px, env(safe-area-inset-left, 0px));display:flex;flex-direction:column;gap:24px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,6vw,50px);line-height:1.05;margin:6px 0 8px}
+h1 i{color:var(--accent)}
+.lead{color:var(--muted);margin:0;max-width:62ch}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(18px,3.5vw,28px);display:flex;flex-direction:column;gap:16px;min-width:0}
+.card h2{font-family:var(--display);font-weight:400;font-size:28px;line-height:1.1;margin:0}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label{font-weight:600;font-size:15px}
+.help{font-size:13px;color:var(--muted);margin:0}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 13px;width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent-strong);outline-offset:2px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:520px){.row2{grid-template-columns:1fr}}
+details{border-top:1px solid var(--line);padding-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--accent);list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:" +"}
+details[open] summary::after{content:" −"}
+details .inner{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.check{display:flex;gap:10px;align-items:center;font-size:15px}
+.check input{width:auto}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn{font:inherit;font-weight:600;border-radius:10px;padding:11px 18px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink)}
+.btn.primary{background:var(--accent-strong);border-color:var(--accent-strong);color:var(--on-accent)}
+.btn.small{padding:6px 12px;font-size:14px}
+.status{font-size:14px;color:var(--bad);margin:0;min-height:1.2em}
+.result{display:flex;flex-direction:column;gap:20px}
+.opt{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--bg);cursor:pointer}
+.opt.sel{border-color:var(--accent-strong);box-shadow:0 0 0 1px var(--accent-strong)}
+.opt .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.cnt{font-size:13px;font-weight:700;color:var(--good)}
+.cnt.over{color:var(--bad)}
+.bio{white-space:pre-line;margin:0;font-size:15px}
+.why{font-size:13px;color:var(--muted);margin:0}
+.names{display:flex;flex-direction:column;gap:8px}
+/* phone */
+.phone{width:min(100%,360px);margin:0 auto;border-radius:40px;background:#000;padding:10px}
+.screen{border-radius:32px;background:var(--phone);color:var(--phone-ink);padding:34px 18px 22px;font-size:13px;line-height:1.42}
+.ig-top{font-weight:700;font-size:17px;margin-bottom:14px}
+.ig-head{display:flex;align-items:center;gap:18px}
+.av{width:76px;height:76px;border-radius:50%;flex:none;background:linear-gradient(135deg,#3A3D44,#8C6420);box-shadow:0 0 0 3px var(--phone),0 0 0 5px #D9AE5F;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:32px;color:#F5F1EA}
+.stats{display:flex;gap:16px;text-align:center;font-size:12px}
+.stats b{display:block;font-size:15px}
+.ig-name{font-weight:700;margin-top:12px}
+.ig-bio{white-space:pre-line;margin-top:2px}
+.ig-link{color:#E0F1FF;font-weight:600;margin-top:4px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.btns div{background:var(--phone-btn);border-radius:8px;text-align:center;padding:7px;font-weight:600}
+.empty{color:var(--muted);margin:0}
+footer{font-size:13px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Mentoria Método VALOR · Ferramenta</p>
+    <h1>Gerador de <i>Bio</i></h1>
+    <p class="lead">Responda o essencial e receba o nome do perfil e três versões de bio dentro do limite do Instagram, montadas na regra do método: para quem, resultado, prova e convite.</p>
+  </header>
+
+  <div class="grid">
+    <form class="card" id="form" novalidate>
+      <h2>Sobre você</h2>
+      <div class="row2">
+        <div class="field"><label for="nome">Seu nome no perfil</label><input id="nome" placeholder="ex. Cibele Nascimento" autocomplete="name"></div>
+        <div class="field"><label for="esp">O que você é</label><input id="esp" placeholder="ex. Psicanalista"><p class="help">A sua profissão em 1 ou 2 palavras.</p></div>
+      </div>
+      <div class="field"><label for="pub">Para quem (o seu nicho)</label><input id="pub" placeholder="ex. mulheres que já tentaram de tudo"><p class="help">Comece com o público, sem "para". Quanto mais específico, melhor.</p></div>
+      <div class="field"><label for="res">O resultado que você entrega</label><input id="res" placeholder="ex. reencontrar clareza e caminho"><p class="help">Comece com um verbo: reencontrar, vender, voltar a…</p></div>
+      <div class="field"><label for="prod">O seu produto ou oferta principal</label><input id="prod" placeholder="ex. Vivência Raízes"></div>
+      <div class="field"><label for="cta">Para onde vai o link da bio?</label>
+        <select id="cta">
+          <option value="whats">WhatsApp: conversar comigo</option>
+          <option value="vaga">Página ou WhatsApp para garantir vaga no produto</option>
+          <option value="agenda">Agendar atendimento</option>
+          <option value="direct">Não tenho link: chamar no direct</option>
+        </select>
+      </div>
+
+      <details id="mais">
+        <summary>Mais detalhes (opcional, deixa a bio mais forte)</summary>
+        <div class="inner">
+          <div class="field"><label for="dor">A dor dela, nas palavras dela</label><input id="dor" placeholder="ex. Sente que na sua vez sempre dá errado"><p class="help">Usada na versão que abre com uma pergunta.</p></div>
+          <div class="field"><label for="met">O seu método ou abordagem</label><input id="met" placeholder="ex. psicanálise sistêmica"></div>
+          <div class="field"><label for="prova">Uma prova</label><input id="prova" placeholder="ex. +10 vidas transformadas"><p class="help">Número, anos de experiência, formação de peso ou onde você já esteve. Só o que for verdade.</p></div>
+          <div class="row2">
+            <div class="field"><label for="cid">Cidade (se atende presencial)</label><input id="cid" placeholder="ex. Jundiaí"></div>
+            <div class="field"><label for="busca">Palavra que o cliente pesquisa</label><input id="busca" placeholder="ex. Psicanálise"><p class="help">Vai para o nome do perfil, que entra na busca.</p></div>
+          </div>
+          <label class="check"><input type="checkbox" id="emoji" checked> Usar emojis discretos</label>
+        </div>
+      </details>
+
+      <div class="actions">
+        <button type="submit" class="btn primary">Gerar minha bio</button>
+        <button type="button" class="btn" id="exBtn">Ver um exemplo</button>
+      </div>
+      <p class="status" id="status" role="status"></p>
+    </form>
+
+    <section class="card" aria-labelledby="resT">
+      <h2 id="resT">Seu perfil</h2>
+      <div class="phone" aria-label="Prévia do perfil">
+        <div class="screen">
+          <div class="ig-top" id="pUser">seuperfil</div>
+          <div class="ig-head"><div class="av" id="pAv">V</div><div class="stats"><div><b>·</b>posts</div><div><b>·</b>seguidores</div><div><b>·</b>seguindo</div></div></div>
+          <div class="ig-name" id="pName">Seu nome | O que você faz</div>
+          <div class="ig-bio" id="pBio">A bio escolhida aparece aqui.</div>
+          <div class="ig-link" id="pLink">🔗 texto do link</div>
+          <div class="btns"><div>Seguir</div><div>Mensagem</div></div>
+        </div>
+      </div>
+      <p class="help" style="text-align:center">Toque numa opção abaixo para ver como ela fica no perfil.</p>
+    </section>
+  </div>
+
+  <section class="card" aria-labelledby="outT">
+    <h2 id="outT">Resultado</h2>
+    <div id="out" class="result"><p class="empty">Preencha os campos e toque em Gerar minha bio.</p></div>
+  </section>
+
+  <footer>Mentoria Método VALOR · Gabriel Speratti</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY="valor-bio-v1";
+  var IDS=["nome","esp","pub","res","prod","cta","dor","met","prova","cid","busca"];
+  var $=function(id){return document.getElementById(id);};
+  var sel={name:0,bio:0}, last=null;
+
+  function clean(s){ return String(s||"").replace(/\s+/g," ").replace(/\s*[—–]\s*/g,", ").replace(/\s-\s/g,", ").trim(); }
+  function cap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
+  function low(s){ return s ? s.charAt(0).toLowerCase()+s.slice(1) : s; }
+  function noDot(s){ return s.replace(/[.!]+$/,""); }
+  function len(s){ return Array.from(s).length; } // emojis contam como 1
+  function read(){ var d={}; IDS.forEach(function(k){ d[k]=k==="cta"?$(k).value:clean($(k).value); }); d.emoji=$("emoji").checked; return d; }
+  function save(){ try{ var d=read(); localStorage.setItem(KEY,JSON.stringify(d)); }catch(e){} }
+  function load(){ try{ var d=JSON.parse(localStorage.getItem(KEY)||"null"); if(!d) return; IDS.forEach(function(k){ if(d[k]!=null) $(k).value=d[k]; }); if(d.emoji!=null) $("emoji").checked=d.emoji; if(d.dor||d.met||d.prova||d.cid||d.busca) $("mais").open=true; }catch(e){} }
+
+  function ctaLine(d,e){
+    var a=e?" ⤵️":"";
+    if(d.cta==="vaga") return (d.prod? noDot(d.prod)+": garanta a sua vaga" : "Garanta a sua vaga")+a;
+    if(d.cta==="agenda") return "Agende o seu atendimento"+a;
+    if(d.cta==="direct") return "Me chame no direct"+(e?" 💬":"");
+    return "Fale comigo no WhatsApp"+a;
+  }
+  function linkText(d){
+    if(d.cta==="vaga"){ var t=d.prod? "Garantir vaga: "+noDot(d.prod) : ""; return (t && len(t)<=40)? t : "Quero a minha vaga"; }
+    if(d.cta==="agenda") return "Agendar atendimento";
+    if(d.cta==="direct") return "";
+    return "Falar comigo no WhatsApp";
+  }
+  // monta respeitando 150 caracteres: tira as linhas opcionais de trás para frente
+  function fit(lines){
+    var L=lines.filter(function(l){return l && l.t;});
+    function txt(){ return L.map(function(l){return l.t;}).join("\n"); }
+    while(len(txt())>150){
+      var i=-1; for(var j=L.length-1;j>=0;j--){ if(L[j].opt){ i=j; break; } }
+      if(i<0) break; L.splice(i,1);
+    }
+    return txt();
+  }
+
+  function build(d){
+    var e=d.emoji, esp=noDot(cap(d.esp)), pub=noDot(low(d.pub)), res=noDot(low(d.res));
+    var met=noDot(low(d.met)), prova=noDot(d.prova), prod=noDot(d.prod), cid=noDot(d.cid);
+    var busca=noDot(cap(d.busca||d.esp));
+    var dor=noDot(d.dor).replace(/\?+$/,"");
+    var local=cid? (e?"📍 ":"")+cid+" e online" : "";
+    var cta=ctaLine(d,e);
+    var prodLine=(prod && d.cta!=="vaga")? (e?"✦ ":"")+prod : "";
+
+    // nomes (até 64)
+    var names=[], nm=d.nome;
+    function addName(n,why){ n=clean(n); if(n && len(n)<=64 && names.every(function(x){return x.t!==n;})) names.push({t:n,why:why}); }
+    addName(nm+" | "+busca+(cid?" em "+cid:""), "Nome com a palavra de busca"+(cid?" e a cidade, para quem procura atendimento perto":"")+".");
+    var pub1=cap(pub.split(" ")[0]||"");
+    if(pub1) addName(nm+" | "+busca+" para "+pub1, "Palavra de busca e público no primeiro olhar.");
+    if(met) addName(nm+" | "+esp+" · "+cap(met), "Profissão e abordagem: mostra a sua diferença.");
+    else if(pub1) addName(nm+" | "+esp+" para "+pub1, "Profissão e público.");
+    if(!names.length) addName((nm||"Seu nome")+" | "+(esp||"O que você faz"),"Nome e profissão.");
+
+    var bios=[];
+    // A: para quem + resultado
+    bios.push({tag:"Clássica · para quem e resultado", why:"A regra do método na ordem: público, resultado, diferencial, prova e convite.",
+      t:fit([{t:"Ajudo "+pub+" a "+res},{t:(e?"✦ ":"")+esp+(met?" · "+cap(met):""),opt:false},{t:prova?(e?"✦ ":"")+cap(prova):"",opt:true},{t:local,opt:true},{t:cta}])});
+    // B: dor primeiro
+    if(dor) bios.push({tag:"Identificação · abre pela dor", why:"Quem sente a dor se reconhece na primeira linha e continua lendo.",
+      t:fit([{t:cap(dor)+"?"},{t:(met?cap(met):esp)+" para "+pub},{t:prodLine,opt:true},{t:local,opt:true},{t:cta}])});
+    else bios.push({tag:"Identificação · abre pelo resultado", why:"Preencha a dor em Mais detalhes para uma versão que abre com pergunta.",
+      t:fit([{t:"Quer "+res+"?"},{t:esp+" para "+pub},{t:prodLine,opt:true},{t:local,opt:true},{t:cta}])});
+    // C: autoridade
+    bios.push({tag:"Autoridade · prova primeiro", why:"Abre com o que você é e o que já fez. Boa quando a prova é forte.",
+      t:fit([{t:esp+(prova?" · "+cap(prova):"")},{t:"Te ajudo a "+res},{t:prodLine,opt:true},{t:local,opt:true},{t:cta}])});
+    return {names:names,bios:bios,link:linkText(d),d:d};
+  }
+
+  function copy(text,btn){
+    function ok(){ var o=btn.textContent; btn.textContent="Copiado"; setTimeout(function(){btn.textContent=o;},1500); }
+    try{ navigator.clipboard.writeText(text).then(ok,function(){ prompt("Copie o texto:",text); }); }catch(e){ prompt("Copie o texto:",text); }
+  }
+
+  function preview(){
+    if(!last) return;
+    var n=last.names[sel.name]||last.names[0], b=last.bios[sel.bio]||last.bios[0];
+    $("pName").textContent=n.t; $("pBio").textContent=b.t;
+    $("pLink").textContent=last.link? "🔗 "+last.link : "";
+    $("pAv").textContent=(last.d.nome||"V").charAt(0).toUpperCase();
+    $("pUser").textContent=(last.d.nome||"seuperfil").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]/g,"");
+  }
+
+  function block(title){ var w=document.createElement("div"); w.style.cssText="display:flex;flex-direction:column;gap:10px"; var t=document.createElement("p"); t.className="tag"; t.textContent=title; w.appendChild(t); return w; }
+  function option(kind,i,item,limit){
+    var o=document.createElement("div"); o.className="opt"+(sel[kind]===i?" sel":""); o.tabIndex=0; o.setAttribute("role","button");
+    var top=document.createElement("div"); top.className="top";
+    var tg=document.createElement("span"); tg.className="tag"; tg.textContent=item.tag||("Opção "+(i+1));
+    var c=document.createElement("span"); var n=len(item.t); c.className="cnt"+(n>limit?" over":""); c.textContent=n+"/"+limit;
+    var cb=document.createElement("button"); cb.type="button"; cb.className="btn small"; cb.textContent="Copiar";
+    cb.addEventListener("click",function(ev){ ev.stopPropagation(); copy(item.t,cb); });
+    var right=document.createElement("span"); right.style.cssText="display:flex;gap:10px;align-items:center"; right.appendChild(c); right.appendChild(cb);
+    top.appendChild(tg); top.appendChild(right);
+    var p=document.createElement("p"); p.className="bio"; p.textContent=item.t;
+    o.appendChild(top); o.appendChild(p);
+    if(item.why){ var w=document.createElement("p"); w.className="why"; w.textContent=item.why; o.appendChild(w); }
+    function pick(){ sel[kind]=i; render(); }
+    o.addEventListener("click",pick); o.addEventListener("keydown",function(ev){ if(ev.key==="Enter"||ev.key===" "){ ev.preventDefault(); pick(); }});
+    return o;
+  }
+  function render(){
+    var out=$("out"); out.innerHTML="";
+    var b1=block("Nome do perfil · até 64 caracteres");
+    last.names.forEach(function(n,i){ b1.appendChild(option("name",i,{t:n.t,why:n.why,tag:"Opção "+(i+1)},64)); });
+    out.appendChild(b1);
+    var b2=block("Bio · até 150 caracteres");
+    last.bios.forEach(function(b,i){ b2.appendChild(option("bio",i,b,150)); });
+    out.appendChild(b2);
+    if(last.link){ var b3=block("Texto do link na bio"); b3.appendChild(option("link",0,{t:last.link,why:"Escreva a ação no título do link, não o endereço.",tag:"Link"},40)); out.appendChild(b3); }
+    var tip=document.createElement("p"); tip.className="why"; tip.textContent="Regra do método: use uma versão por 2 semanas sem mexer. Depois teste outra e compare visitas ao perfil e conversas no Painel VALOR.";
+    out.appendChild(tip);
+    preview();
+  }
+
+  $("form").addEventListener("submit",function(ev){
+    ev.preventDefault(); var d=read(); var miss=[];
+    if(!d.nome) miss.push("seu nome"); if(!d.esp) miss.push("o que você é"); if(!d.pub) miss.push("para quem"); if(!d.res) miss.push("o resultado");
+    if(miss.length){ $("status").textContent="Falta preencher: "+miss.join(", ")+"."; return; }
+    $("status").textContent=""; sel={name:0,bio:0}; last=build(d); render(); save();
+    if(window.innerWidth<860) document.getElementById("resT").scrollIntoView({behavior:"smooth"});
+  });
+  $("exBtn").addEventListener("click",function(){
+    var ex={nome:"Cibele Nascimento",esp:"Psicanalista",pub:"mulheres que já tentaram de tudo",res:"reencontrar clareza e caminho",prod:"Vivência Raízes",cta:"vaga",dor:"Sente que na sua vez sempre dá errado",met:"psicanálise sistêmica",prova:"",cid:"",busca:"Psicanálise"};
+    IDS.forEach(function(k){ $(k).value=ex[k]; }); $("mais").open=true; $("form").requestSubmit();
+  });
+  IDS.forEach(function(k){ $(k).addEventListener("change",save); });
+  load();
+})();
+</script>
+</body>
+</html>

@@ -100,7 +100,7 @@ footer{font-size:13px;color:var(--muted);text-align:center}
       <div class="row2">
         <div class="field"><label for="conv">Conversas iniciadas</label><input id="conv" inputmode="numeric" placeholder="0"><p class="help">Direct e WhatsApp, só contatos novos com interesse.</p><p class="okmsg" id="o_conv"></p><p class="wmsg" id="w_conv" role="alert"></p></div>
         <div class="field"><label for="vend">Vendas fechadas</label><input id="vend" inputmode="numeric" placeholder="0"><p class="okmsg" id="o_vend"></p><p class="wmsg" id="w_vend" role="alert"></p></div>
-        <div class="field"><label for="ticket">Ticket médio (R$)</label><input id="ticket" inputmode="decimal" placeholder="ex. 300"><p class="help">Quanto um cliente paga, em média. Valor cheio, sem centavos.</p><p class="okmsg" id="o_ticket"></p><p class="wmsg" id="w_ticket" role="alert"></p></div>
+        <div class="field"><label for="ticket">Ticket médio (R$)</label><input id="ticket" inputmode="decimal" placeholder="ex. 300"><p class="help">Quanto um cliente paga, em média. Ainda sem vendas? Coloque o preço do que você mais vende agora (ex. 297).</p><p class="okmsg" id="o_ticket"></p><p class="wmsg" id="w_ticket" role="alert"></p></div>
       </div>
       <span class="stage">Receita</span>
       <div class="row2">
@@ -160,6 +160,24 @@ footer{font-size:13px;color:var(--muted);text-align:center}
   var PERIODS = ["Marco zero"]; for (var i=1;i<=12;i++) PERIODS.push("Semana "+i);
   var state = { nome:"", weeks:{} };
   try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); if (p && p.weeks) state = p; } } catch(e){}
+  // dados enviados pelo mentor no link: #dados=<base64 JSON {nome, weeks}>
+  try {
+    var h = location.hash || "";
+    if (h.indexOf("#dados=")===0){
+      var b = h.slice(7).replace(/-/g,"+").replace(/_/g,"/"); while (b.length%4) b+="=";
+      var bin = atob(b), bytes = new Uint8Array(bin.length); for (var k=0;k<bin.length;k++) bytes[k]=bin.charCodeAt(k);
+      var inc = JSON.parse(new TextDecoder().decode(bytes));
+      if (inc && inc.weeks){
+        var lista = Object.keys(inc.weeks).join(", ");
+        if (confirm("O seu mentor enviou os números corrigidos de: "+lista+". Substituir esses períodos no seu painel?")){
+          if (inc.nome) state.nome = inc.nome;
+          Object.keys(inc.weeks).forEach(function(k2){ state.weeks[k2] = inc.weeks[k2]; });
+          try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+        }
+      }
+      history.replaceState(null, "", location.pathname + location.search);
+    }
+  } catch(e){}
 
   var $ = function(id){ return document.getElementById(id); };
   var sel = $("semana");

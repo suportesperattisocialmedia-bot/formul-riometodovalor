@@ -86,7 +86,7 @@ footer{font-size:13px;color:var(--muted);text-align:center}
       <h2>Números da semana</h2>
       <div class="row2">
         <div class="field"><label for="nome">Seu nome</label><input id="nome" type="text" autocomplete="name"></div>
-        <div class="field"><label for="semana">Período</label><select id="semana"></select></div>
+        <div class="field"><label for="semana">Período</label><select id="semana"></select><p class="help" id="perHelp" style="font-size:14px"></p></div>
       </div>
       <hr class="sep">
       <span class="stage">Atrair</span>
@@ -317,12 +317,16 @@ footer{font-size:13px;color:var(--muted);text-align:center}
   sel.addEventListener("change", function(){ var w=state.weeks[sel.value]; if (w) fillForm(w); else { fillForm({}); $("invest").value=prevInvest(); $("meta").value=prevMeta(); } renderCalc(); $("saveStatus").textContent=""; });
   FIELDS.forEach(function(f){ $(f).addEventListener("input", renderCalc); });
   $("nome").addEventListener("input", function(){ state.nome=$("nome").value; persist(); refreshSend(); });
+  var marcoOk=false;
+  function perHelp(){ $("perHelp").textContent = sel.value==="Marco zero" ? "Marco zero = como estava antes da mentoria. Números da semana vão na Semana do encontro." : ""; }
+  perHelp(); sel.addEventListener("change", function(){ marcoOk=false; perHelp(); });
   $("form").addEventListener("submit", function(e){
     e.preventDefault();
     var d=readForm(); var any=FIELDS.some(function(f){ return String(d[f]).trim()!==""; });
     if(!any){ $("saveStatus").textContent="Preencha pelo menos um número antes de salvar."; $("saveStatus").className="status bad"; return; }
     var nw=validate();
     if (nw && !warnedOnce){ warnedOnce=true; $("saveStatus").className="status bad"; $("saveStatus").textContent="Confira "+(nw===1?"o aviso em vermelho":"os "+nw+" avisos em vermelho")+". Se estiver tudo certo, clique em salvar de novo."; return; }
+    if (sel.value==="Marco zero" && !marcoOk){ marcoOk=true; $("saveStatus").className="status bad"; $("saveStatus").textContent="Atenção: o Marco zero é só o retrato de antes da mentoria começar. Se você está mandando os números desta semana, troque o Período para a semana atual (ex.: Semana 3). Se for mesmo o marco zero, clique em salvar de novo."; return; }
     state.nome=$("nome").value; state.weeks[sel.value]=d;
     var ok=persist(); $("saveStatus").className="status";
     $("saveStatus").textContent = ok ? sel.value+" salvo. Agora é só enviar para o Gabriel." : sel.value+" registrado nesta tela, mas o navegador não deixou guardar. Envie agora para não perder.";
